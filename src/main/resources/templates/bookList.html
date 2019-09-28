@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="fragments/headFragment :: head">
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<div class="container">
+    <h2 class="text-center">Book List</h2>
+    <div>
+        <form action="/books/filter" method="get">
+            <div class="form-group row">
+                <div class="col-sm-3"></div>
+                <div class="col-auto">
+                    <label for="select" class="col-form-label">Find by</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-control" id="select">
+                        <option name="name">name</option>
+                        <option name="author">author</option>
+                        <option name="attribute">attribute</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <input id="search" class="form-control" name="name" type="text" required>
+                </div>
+                <div class="col-sm-2">
+                    <input type="submit" class="btn btn-info" value="Search">
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+        </form>
+    </div>
+
+    <div sec:authorize="hasAuthority('ADMIN')">
+        <a class="btn btn-primary mb-3" th:href="@{/admin/save}">Add new book</a>
+    </div>
+
+    <h2 th:if="${error != null}">Not found</h2>
+    <h2 th:if="${error == null and page.getContent().isEmpty()}">There are no books in the library</h2>
+
+    <div th:if="${(error == null) and (!page.getContent().isEmpty())}" class="table-responsive-sm">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Authors</th>
+                <th:block sec:authorize="hasAuthority('ADMIN')">
+                    <th>Bookcase</th>
+                    <th>Shelf</th>
+                </th:block>
+                <th>Action</th>
+                <th:block sec:authorize="hasAuthority('ADMIN')">
+                    <th colspan="2"></th>
+                </th:block>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="book: ${page.getContent()}">
+                <tr>
+                    <td th:text="${book.name}"></td>
+                    <td th:text="${book.authors}"></td>
+                    <th:block sec:authorize="hasAuthority('ADMIN')">
+                        <td th:text="${book.bookcase}"></td>
+                        <td th:text="${book.bookshelf}"></td>
+                    </th:block>
+                    <!--Check is debtor-->
+                    <th:block th:if="${book.expiredDays == null && !debtor}">
+                        <td><a th:href="@{/books/take/{id}(id=${book.id})}">Take book</a> </td>
+                    </th:block>
+                    <th:block th:if="${book.expiredDays == null && debtor}">
+                        <td>You can't take any book</td>
+                    </th:block>
+
+                    <th:block th:unless="${book.expiredDays == null}">
+                        <th:block th:with="isCurrentUserBook=${book.ownerId == userId}">
+
+                            <th:block th:if="${isCurrentUserBook}">
+                                <td th:if="${!book.ordered}" th:text="${30 - book.expiredDays} + ' day(s) to return'"></td>
+                                <td th:if="${book.ordered}"><a th:href="@{/books/cancel/{id}(id=${book.id})}">Cancel</a></td>
+                            </th:block>
+                            <th:block th:if="${!isCurrentUserBook}">
+                                <td>This book is unavailable</td>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+
+                    <th:block sec:authorize="hasAuthority('ADMIN')">
+                        <td>
+                            <a th:if="${book.expiredDays == null}" th:href="@{/admin/edit?id={id}(id=${book.id})}">
+                                <img src="/img/edit.png" th:src="@{img/edit.png}"/>
+                            </a>
+                        </td>
+                        <td>
+                            <a th:if="${book.expiredDays == null}" th:href="@{/admin/delete?id={id}(id=${book.id})}">
+                                <img src="/img/delete.png" th:src="@{img/delete.png}"/>
+                            </a>
+                        </td>
+                    </th:block>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

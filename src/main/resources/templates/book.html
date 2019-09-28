@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="fragments/headFragment :: head">
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<div class="container">
+    <h2 class="text-center">
+        <th:block th:if="${book.id == null}">Save book</th:block>
+        <th:block th:unless="${book.id == null}">Edit book</th:block>
+    </h2>
+
+
+    <form id="book" name="book" th:action="${book.id == null} ? 'admin/save' : 'admin/edit'" method="post">
+        <th:block th:if="${book.id != null}">
+            <input type="hidden" name="id" th:value="${book.id}">
+        </th:block>
+
+        <div class="form-group row">
+            <label for="name" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-6">
+                <input id="name" name="name" type="text" class="form-control" th:value="${book.name}" size="50"
+                       maxlength="100" required>
+                <!--<small class="form-text text-danger collapse" th:classappend="${BooknameError != null} ? 'show' : ''" th:text="${BooknameError}"></small>-->
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="bookcase" class="col-sm-2 col-form-label">Bookcase</label>
+            <div class="col-sm-2">
+                <input id="bookcase" name="bookcase" class="form-control" type="number" th:value="${book.bookcase}"
+                       required>
+            </div>
+            <label for="bookshelf" class="col-sm-2 col-form-label">Shelf</label>
+            <div class="col-sm-2">
+                <input id="bookshelf" class="form-control" type="number" th:value="${book.bookshelf}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="authors">Authors</label>
+            <textarea id="authors" name="authors" class="form-control col-sm-8" form="book" rows="4"
+                      th:text="${book.authors}" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="attributes">Attributes</label>
+            <textarea id="attributes" name="attributes" class="form-control col-sm-8" form="book" rows="4" cols="30"
+                      th:text="${book.attributes}" required></textarea>
+        </div>
+
+<input type="submit" class="btn btn-success" th:if="${book.id == null}" value="Save book">
+<input type="submit" class="btn btn-success" th:unless="${book.id == null}" value="Edit book">
+</form>
+</div>
+</body>
+</html>
