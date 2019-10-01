@@ -33,13 +33,17 @@ public class BookDto {
     @Size(min = 2)
     private String attributes;
 
-    public void setAuthors(Set<Author> authors) {
+    public BookDto(Integer id, Integer ownerId, String name, Integer expiredDays, Integer bookcase, Integer bookshelf, Boolean ordered) {
+        this(id, ownerId, name, expiredDays, bookcase, bookshelf, ordered, null, null);
+    }
+
+    public void setAsStringAuthors(Set<Author> authors) {
         if (authors != null && !authors.isEmpty()) {
             this.authors = authors.stream().map(Author::getName).collect(Collectors.joining(", "));
         }
     }
 
-    public void setAttributes(Set<Attribute> attributes) {
+    public void setAsStringAttributes(Set<Attribute> attributes) {
         if (attributes != null && !attributes.isEmpty()) {
             this.attributes = attributes.stream().map(Attribute::getName).collect(Collectors.joining(", "));
         }

@@ -12,7 +12,7 @@
     </h2>
 
 
-    <form id="book" name="book" th:action="${book.id == null} ? 'admin/save' : 'admin/edit'" method="post">
+    <form id="book" th:action="${book.id == null} ? '/admin/save' : '/admin/edit'" method="post">
         <th:block th:if="${book.id != null}">
             <input type="hidden" name="id" th:value="${book.id}">
         </th:block>
@@ -34,7 +34,7 @@
             </div>
             <label for="bookshelf" class="col-sm-2 col-form-label">Shelf</label>
             <div class="col-sm-2">
-                <input id="bookshelf" class="form-control" type="number" th:value="${book.bookshelf}" required>
+                <input id="bookshelf" name="bookshelf" class="form-control" type="number" th:value="${book.bookshelf}" required>
             </div>
         </div>
 

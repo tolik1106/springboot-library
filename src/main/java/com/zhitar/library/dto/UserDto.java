@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -26,4 +27,5 @@ public class UserDto {
     @NotBlank
     @Pattern(regexp = "^0(95|50|66|99|67|96|97|98|63|93|73)\\d{7}")
     private String phone;
+    private List<BookDto> bookDtos;
 }

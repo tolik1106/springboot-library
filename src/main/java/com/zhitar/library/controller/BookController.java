@@ -15,6 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/books")
@@ -22,13 +25,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class BookController {
 
     private static final int DEFAULT_PAGE_SIZE = 10;
-    private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, "name");
+    private static final String NAME = "name";
+    private static final String AUTHOR = "author";
+    private static final String ATTRIBUTE = "attribute";
+    private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, NAME);
+
     private final BookService bookService;
 
     @GetMapping
-    public String getAll(Pageable pageable, Model model, @AuthenticationPrincipal User user) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), DEFAULT_PAGE_SIZE, DEFAULT_SORT);
-        Page<BookDto> page = bookService.findAll(pageRequest);
+    public String getAll(
+            Pageable pageable,
+            Model model,
+            @AuthenticationPrincipal User user,
+            @RequestParam(name = NAME, required = false) String name,
+            @RequestParam(name = AUTHOR, required = false) String author,
+            @RequestParam(name = ATTRIBUTE, required = false) String attribute,
+            HttpSession session
+    ) {
+        pageable = PageRequest.of(pageable.getPageNumber(), DEFAULT_PAGE_SIZE, DEFAULT_SORT);
+        Page<BookDto> page = null;
+        if (name != null) {
+            removeAttributes(session, AUTHOR, ATTRIBUTE);
+            session.setAttribute(NAME, name);
+            page = bookService.findByNameWithAuthor(name, pageable);
+        } else {
+            page = bookService.findAll(pageable);
+        }
         if (page.getContent().isEmpty()) {
             model.addAttribute("error", "");
         }
@@ -48,5 +70,11 @@ public class BookController {
     public String cancel(@PathVariable Integer id, @AuthenticationPrincipal User user) {
         bookService.cancelOrder(id, user.getId());
         return "redirect:/books";
+    }
+
+    private void removeAttributes(HttpSession session, String... attributes) {
+        for (String attribute : attributes) {
+            session.removeAttribute(attribute);
+        }
     }
 }

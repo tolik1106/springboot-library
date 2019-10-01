@@ -2,6 +2,7 @@ package com.zhitar.library.controller;
 
 import com.zhitar.library.dto.UserDto;
 import com.zhitar.library.service.UserService;
+import com.zhitar.library.util.ValidationUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -59,11 +60,14 @@ public class WelcomeController {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public String duplicateEmail(DataIntegrityViolationException e, Model model) {
-//        String rootMsg = ValidationUtil.getRootCause(e).getMessage();
-        model.addAttribute("duplicateemailError", "User with this email already exist");
-        model.addAttribute("register", true);
-        model.addAttribute("userDto", new UserDto());
-        return "login";
+        String rootMsg = ValidationUtil.getRootCause(e).getMessage();
+        if (rootMsg.contains("unique_user_email")) {
+            model.addAttribute("duplicateemailError", "User with this email already exist");
+            model.addAttribute("register", true);
+            model.addAttribute("userDto", new UserDto());
+            return "login";
+        }
+        return null;
     }
 
 

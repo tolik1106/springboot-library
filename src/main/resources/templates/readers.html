@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/headFragment :: head">
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="text-center h2">Readers</div>
+
+    <th:block th:if="${users == null or users.isEmpty()}">
+        <h2>There are no readers</h2>
+    </th:block>
+    <th:block th:unless="${users == null or users.isEmpty()}">
+        <ul>
+            <th:block th:each="user : ${users}">
+                <li class="font-weight-bold" th:text="${user.name}"></li>
+                <ol>
+                    <th:block th:each="book : ${user.getBookDtos()}">
+                        <li>
+                            <span th:text="${book.name} + '&emsp;'"></span>
+                            <th:block th:with="action=${book.ordered} ? '/admin/give' : '/admin/return'">
+                            <form style="display: inline-block" method="post" th:action="${action}">
+                                <input type="hidden" name="bookId" th:value="${book.id}">
+                                <input type="hidden" name="userId" th:value="${user.id}">
+                                <input type="submit" class="btn btn-sm" th:classappend="${book.ordered} ? 'btn-primary' : 'btn-outline-success'" th:value="${book.ordered} ? 'Give' : 'Return'">
+                            </form>
+                            </th:block>
+                        </li>
+
+                    </th:block>
+                </ol>
+            </th:block>
+        </ul>
+    </th:block>
+
+</div>
+
+</body>
+</html>

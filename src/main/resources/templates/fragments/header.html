@@ -16,7 +16,7 @@
                 <a class="nav-link text-secondary" th:href="@{/}">Home</a>
             </li>
             <li sec:authorize="isAuthenticated()">
-                <a th:href="@{/books}" class="nav-link">Book list</a>
+                <a th:href="@{/books?page=0}" class="nav-link">Book list</a>
             </li>
             <li sec:authorize="hasAuthority('ADMIN')">
                 <a th:href="@{/admin/readers}" class="nav-link">Readers</a>

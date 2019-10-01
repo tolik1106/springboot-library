@@ -8,14 +8,14 @@
 <div class="container">
     <h2 class="text-center">Book List</h2>
     <div>
-        <form action="/books/filter" method="get">
+        <form action="/books" method="get">
             <div class="form-group row">
                 <div class="col-sm-3"></div>
                 <div class="col-auto">
                     <label for="select" class="col-form-label">Find by</label>
                 </div>
                 <div class="col-auto">
-                    <select class="form-control" id="select">
+                    <select class="form-control" id="select" onchange="changeSearchName(this)">
                         <option name="name">name</option>
                         <option name="author">author</option>
                         <option name="attribute">attribute</option>
@@ -103,7 +103,36 @@
             </tbody>
         </table>
     </div>
+    <th:block th:if="${page.hasContent() and (page.getTotalPages() &gt; 1)}">
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${page.isFirst()} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/books?page={previous}(previous=${page.getNumber() - 1})}" tabindex="-1">Previous</a>
+                </li>
+                <th:block th:each="pag: ${#numbers.sequence(1, page.getTotalPages())}">
+                    <li class="page-item" th:classappend="${pag == page.getNumber() + 1} ? 'active' : ''">
+                        <a class="page-link" th:href="@{/books?page={current}(current=${pag - 1})}" th:text="${pag}"></a>
+                    </li>
+                </th:block>
+                <li class="page-item" th:classappend="${page.isLast()} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/books?page={next}(next=${page.getNumber() + 1})}" tabindex="-1">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </th:block>
 </div>
 
+<script>
+    function changeSearchName(select) {
+        var text = select.options[select.selectedIndex].getAttribute("name");
+        document.getElementById("search").value = '';
+        document.getElementById("search").name = text;
+    }
+</script>
+<script>
+    var select = document.getElementById("select");
+    var text = select.options[select.selectedIndex].getAttribute("name");
+    document.getElementById("search").name = text;
+</script>
 </body>
 </html>

@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,12 +32,23 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDto> findByAuthor(String authorName) {
+
         return null;
     }
 
     @Override
-    public List<BookDto> findByNameWithAuthor(String name) {
-        return null;
+    @Transactional(readOnly = true)
+    public Page<BookDto> findByNameWithAuthor(String name, Pageable pageable) {
+        Page<Book> books = bookRepository.findByName(name, pageable);
+        if (books.isEmpty()) {
+            return getBookDtosPage(books);
+        }
+        List<Book> bookList = bookRepository.findByIdsWithAuthor(
+                books.getContent().stream().map(Book::getId).collect(Collectors.toList()),
+                new Sort(Sort.Direction.ASC, "name")
+        );
+        books = new PageImpl<>(bookList, books.getPageable(), books.getTotalElements());
+        return getBookDtosPage(books);
     }
 
     @Override
@@ -62,17 +74,18 @@ public class BookServiceImpl implements BookService {
     @Override
     public Page<BookDto> findAll(Pageable pageable) {
         Page<Book> books = bookRepository.findAll(pageable);
+        if (books.isEmpty()) {
+            return getBookDtosPage(books);
+        }
         List<Book> bookList = bookRepository.findByIdsWithAuthor(
-                books.getContent().stream().map(Book::getId).collect(Collectors.toList())
+                books.getContent().stream().map(Book::getId).collect(Collectors.toList()),
+                new Sort(Sort.Direction.ASC, "name")
         );
-        books = new PageImpl<Book>(bookList, books.getPageable(), bookList.size());
-        Page<BookDto> bookDtos = books.map((book) -> {
-            BookDto bookDto = bookMapper.toDto(book);
-            bookDto.setAuthors(book.getAuthors());
-            return bookDto;
-        });
-        return bookDtos;
+        books = new PageImpl<Book>(bookList, books.getPageable(), books.getTotalElements());
+        return getBookDtosPage(books);
     }
+
+
 
     @Override
     public Collection<BookDto> findByUser(Integer userId) {
@@ -96,5 +109,13 @@ public class BookServiceImpl implements BookService {
         book.setOwnedDate(null);
         book.setOrdered(false);
         return bookMapper.toDto(bookRepository.save(book));
+    }
+
+    private Page<BookDto> getBookDtosPage(Page<Book> books) {
+        return books.map((book) -> {
+            BookDto bookDto = bookMapper.toDto(book);
+            bookDto.setAsStringAuthors(book.getAuthors());
+            return bookDto;
+        });
     }
 }

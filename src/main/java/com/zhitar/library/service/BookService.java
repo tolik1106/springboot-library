@@ -11,7 +11,7 @@ public interface BookService {
 
     List<BookDto> findByAuthor(String authorName);
 
-    List<BookDto> findByNameWithAuthor(String name);
+    Page<BookDto> findByNameWithAuthor(String name, Pageable pageable);
 
     List<BookDto> findByAttribute(String attribute);
 

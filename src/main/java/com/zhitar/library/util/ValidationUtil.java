@@ -9,6 +9,6 @@ public class ValidationUtil {
         while ((cause = result.getCause()) != null && (result != cause)) {
             result = cause;
         }
-        return cause;
+        return result;
     }
 }

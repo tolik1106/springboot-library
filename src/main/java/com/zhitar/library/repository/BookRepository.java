@@ -3,6 +3,7 @@ package com.zhitar.library.repository;
 import com.zhitar.library.domain.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +20,10 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     @Query("SELECT b FROM Book b")
     Page<Book> findAll(Pageable pageable);
 
-    @Query("SELECT DISTINCT b FROM Book b JOIN FETCH b.authors WHERE b.id IN (:bookIds)")
-    List<Book> findByIdsWithAuthor(@Param("bookIds") List<Integer> bookIds);
+    @Query("SELECT DISTINCT b FROM Book b JOIN FETCH b.authors WHERE b.id IN (:bookIds) ORDER BY b.name")
+    List<Book> findByIdsWithAuthor(@Param("bookIds") List<Integer> bookIds, Sort sort);
+
+    @Query(value = "SELECT b FROM Book b WHERE b.name LIKE %:name%",
+            countQuery = "SELECT COUNT(b) FROM Book b WHERE b.name LIKE %:name%")
+    Page<Book> findByName(@Param("name") String name, Pageable pageable);
 }

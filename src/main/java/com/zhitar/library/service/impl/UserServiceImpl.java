@@ -4,7 +4,6 @@ import com.zhitar.library.domain.Role;
 import com.zhitar.library.domain.User;
 import com.zhitar.library.dto.UserDto;
 import com.zhitar.library.exception.NotFoundException;
-import com.zhitar.library.mapper.EntityMapper;
 import com.zhitar.library.mapper.UserMapper;
 import com.zhitar.library.repository.RoleRepository;
 import com.zhitar.library.repository.UserRepository;
@@ -13,16 +12,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
 @Service
-@Repository
 @AllArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
