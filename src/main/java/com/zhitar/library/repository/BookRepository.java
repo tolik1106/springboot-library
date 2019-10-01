@@ -26,4 +26,10 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     @Query(value = "SELECT b FROM Book b WHERE b.name LIKE %:name%",
             countQuery = "SELECT COUNT(b) FROM Book b WHERE b.name LIKE %:name%")
     Page<Book> findByName(@Param("name") String name, Pageable pageable);
+
+    @Query(value = "SELECT b FROM Book b JOIN b.authors a WHERE a.name = :authorName")
+    Page<Book> findByAuthorsAuthorName(@Param("authorName") String authorName, Pageable pageable);
+
+    @Query(value = "SELECT b FROM Book b JOIN b.attributes attr WHERE attr.name = :attributeName")
+    Page<Book> findByAttributeAttributeName(@Param("attributeName") String attributeName, Pageable pageable);
 }

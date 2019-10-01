@@ -48,6 +48,14 @@ public class BookController {
             removeAttributes(session, AUTHOR, ATTRIBUTE);
             session.setAttribute(NAME, name);
             page = bookService.findByNameWithAuthor(name, pageable);
+        } else if (author != null) {
+            removeAttributes(session, NAME, ATTRIBUTE);
+            session.setAttribute(AUTHOR, author);
+            page = bookService.findByAuthor(author, pageable);
+        } else if (attribute != null) {
+            removeAttributes(session, NAME, AUTHOR);
+            session.setAttribute(ATTRIBUTE, attribute);
+            page = bookService.findByAttribute(attribute, pageable);
         } else {
             page = bookService.findAll(pageable);
         }

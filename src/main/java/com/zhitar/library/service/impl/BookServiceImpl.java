@@ -31,9 +31,13 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
 
     @Override
-    public List<BookDto> findByAuthor(String authorName) {
-
-        return null;
+    public Page<BookDto> findByAuthor(String authorName, Pageable pageable) {
+        Page<Book> books = bookRepository.findByAuthorsAuthorName(authorName, pageable);
+        if (books.isEmpty()) {
+            return getBookDtosPage(books);
+        }
+        books = getBooksPage(books);
+        return getBookDtosPage(books);
     }
 
     @Override
@@ -43,17 +47,19 @@ public class BookServiceImpl implements BookService {
         if (books.isEmpty()) {
             return getBookDtosPage(books);
         }
-        List<Book> bookList = bookRepository.findByIdsWithAuthor(
-                books.getContent().stream().map(Book::getId).collect(Collectors.toList()),
-                new Sort(Sort.Direction.ASC, "name")
-        );
-        books = new PageImpl<>(bookList, books.getPageable(), books.getTotalElements());
+        books = getBooksPage(books);
         return getBookDtosPage(books);
     }
 
     @Override
-    public List<BookDto> findByAttribute(String attribute) {
-        return null;
+    @Transactional(readOnly = true)
+    public Page<BookDto> findByAttribute(String attribute, Pageable pageable) {
+        Page<Book> books = bookRepository.findByAttributeAttributeName(attribute, pageable);
+        if (books.isEmpty()) {
+            return getBookDtosPage(books);
+        }
+        books = getBooksPage(books);
+        return getBookDtosPage(books);
     }
 
     @Override
@@ -77,15 +83,9 @@ public class BookServiceImpl implements BookService {
         if (books.isEmpty()) {
             return getBookDtosPage(books);
         }
-        List<Book> bookList = bookRepository.findByIdsWithAuthor(
-                books.getContent().stream().map(Book::getId).collect(Collectors.toList()),
-                new Sort(Sort.Direction.ASC, "name")
-        );
-        books = new PageImpl<Book>(bookList, books.getPageable(), books.getTotalElements());
+        books = getBooksPage(books);
         return getBookDtosPage(books);
     }
-
-
 
     @Override
     public Collection<BookDto> findByUser(Integer userId) {
@@ -109,6 +109,15 @@ public class BookServiceImpl implements BookService {
         book.setOwnedDate(null);
         book.setOrdered(false);
         return bookMapper.toDto(bookRepository.save(book));
+    }
+
+    private Page<Book> getBooksPage(Page<Book> books) {
+        List<Book> bookList = bookRepository.findByIdsWithAuthor(
+                books.getContent().stream().map(Book::getId).collect(Collectors.toList()),
+                new Sort(Sort.Direction.ASC, "name")
+        );
+        books = new PageImpl<>(bookList, books.getPageable(), books.getTotalElements());
+        return books;
     }
 
     private Page<BookDto> getBookDtosPage(Page<Book> books) {

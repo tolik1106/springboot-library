@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface BookService {
 
-    List<BookDto> findByAuthor(String authorName);
+    Page<BookDto> findByAuthor(String authorName, Pageable pageable);
 
     Page<BookDto> findByNameWithAuthor(String name, Pageable pageable);
 
-    List<BookDto> findByAttribute(String attribute);
+    Page<BookDto> findByAttribute(String attribute, Pageable pageable);
 
     BookDto takeBook(Integer bookId, Integer userId);
 
