@@ -18,9 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -52,61 +50,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public BookDto save(BookDto bookDto) {
         Book bookToSave = bookMapper.toEntity(bookDto);
-
-        saveNewAuthors(bookDto, bookToSave);
-
-        saveNewAttributes(bookDto, bookToSave);
         return bookMapper.toDto(bookRepository.save(bookToSave));
-    }
-
-    private void saveNewAttributes(BookDto bookDto, Book book) {
-        List<Attribute> bookAttributes = getList(bookDto.getAttributes(), Attribute::new);
-        List<Attribute> allAttributes = attributeRepository.findAll();
-        List<Attribute> toSaveAttr = new ArrayList<>();
-        List<Attribute> existAttr = new ArrayList<>();
-        for (Attribute bookAttribute : bookAttributes) {
-            boolean isNew = true;
-            for (Attribute attribute : allAttributes) {
-                if (bookAttribute.getName().equalsIgnoreCase(attribute.getName())) {
-                    bookAttribute.setId(attribute.getId());
-                    isNew = false;
-                    break;
-                }
-            }
-            if (isNew) {
-                toSaveAttr.add(bookAttribute);
-            } else {
-                existAttr.add(bookAttribute);
-            }
-        }
-        List<Attribute> savedAttr = attributeRepository.saveAll(toSaveAttr);
-        book.setAttributes(new HashSet<>(existAttr));
-        book.getAttributes().addAll(savedAttr);
-    }
-
-    private void saveNewAuthors(BookDto bookDto, Book book) {
-        List<Author> bookAuthors = getList(bookDto.getAuthors(), Author::new);
-        List<Author> allAuthors = authorRepository.findAll();
-        List<Author> toSaveAuth = new ArrayList<>();
-        List<Author> existsAuth = new ArrayList<>();
-        for (Author bookAuthor : bookAuthors) {
-            boolean isNew = true;
-            for (Author author : allAuthors) {
-                if (bookAuthor.getName().equalsIgnoreCase(author.getName())) {
-                    bookAuthor.setId(author.getId());
-                    isNew = false;
-                    break;
-                }
-            }
-            if (isNew) {
-                toSaveAuth.add(bookAuthor);
-            } else {
-                existsAuth.add(bookAuthor);
-            }
-        }
-        List<Author> saved = authorRepository.saveAll(toSaveAuth);
-        book.setAuthors(new HashSet<>(existsAuth));
-        book.getAuthors().addAll(saved);
     }
 
     @Override
@@ -121,10 +65,6 @@ public class AdminServiceImpl implements AdminService {
     public BookDto update(BookDto bookDto) {
         Book bookFromDb = bookRepository.findById(bookDto.getId()).orElseThrow(() -> new NotFoundException("Book with id " + bookDto.getId() + " not found"));
         Book bookToUpdate = bookMapper.toEntity(bookDto);
-
-        saveNewAuthors(bookDto, bookToUpdate);
-
-        saveNewAttributes(bookDto, bookToUpdate);
         return bookMapper.toDto(bookRepository.save(bookToUpdate));
     }
 
@@ -144,13 +84,33 @@ public class AdminServiceImpl implements AdminService {
         return bookMapper.toDto(bookRepository.save(book));
     }
 
-    private <T> List<T> getList(String values, Function<String, T> mapper) {
-        String[] split = values.split(",");
+    @Override
+    public void deleteAttribute(Integer bookId, String attribute) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+        Attribute attributeFromDb = attributeRepository.findByName(attribute).orElseThrow(() -> new NotFoundException("Attribute " + attribute + " not found"));
+        book.getAttributes().remove(attributeFromDb);
+    }
 
-        List<String> names = Arrays.stream(split).map(String::trim).collect(Collectors.toList());
-        TreeSet<String> seen = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        names.removeIf(name -> !seen.add(name));
+    @Override
+    public void deleteAuthor(Integer bookId, String author) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+        Author authorFromDb = authorRepository.findByName(author).orElseThrow(() -> new NotFoundException("Author " + author + " not found"));
+        book.getAuthors().remove(authorFromDb);
+    }
 
-        return names.stream().map(mapper).collect(Collectors.toList());
+    @Override
+    public BookDto saveAuthor(Integer bookId, Author author) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+        Author authorFromDb = authorRepository.findByName(author.getName()).orElseGet(() -> authorRepository.save(author));
+        book.getAuthors().add(authorFromDb);
+        return bookMapper.toDto(book);
+    }
+
+    @Override
+    public BookDto saveAttribute(Integer bookId, Attribute attribute) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book with id " + bookId + " not found"));
+        Attribute attributeFromDb = attributeRepository.findByName(attribute.getName()).orElseGet(() -> attributeRepository.save(attribute));
+        book.getAttributes().add(attributeFromDb);
+        return bookMapper.toDto(book);
     }
 }

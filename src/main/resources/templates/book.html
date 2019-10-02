@@ -34,24 +34,84 @@
             </div>
             <label for="bookshelf" class="col-sm-2 col-form-label">Shelf</label>
             <div class="col-sm-2">
-                <input id="bookshelf" name="bookshelf" class="form-control" type="number" th:value="${book.bookshelf}" required>
+                <input id="bookshelf" name="bookshelf" class="form-control" type="number" th:value="${book.bookshelf}"
+                       required>
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="authors">Authors</label>
-            <textarea id="authors" name="authors" class="form-control col-sm-8" form="book" rows="4"
-                      th:text="${book.authors}" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="attributes">Attributes</label>
-            <textarea id="attributes" name="attributes" class="form-control col-sm-8" form="book" rows="4" cols="30"
-                      th:text="${book.attributes}" required></textarea>
+        <th:block th:if="${book.id != null}">
+            <div class="form-group row">
+                <div class="col-sm-8">
+                    <label class="col-form-label">Authors:</label>
+                    <div th:unless="${book.authors == null}">
+                <span class="font-weight-bold" th:each="author : ${#strings.arraySplit(book.authors, ',')}"
+                      th:with="author=${#strings.trim(author)}">
+                    <span class="text-nowrap">
+                    <th:block th:text="${author}"></th:block>
+                    <a th:href="@{/admin/book/{bookId}/author/delete/{author}(bookId=${book.id}, author=${author})}">
+                        <img th:src="@{/img/cross.png}">
+                    </a>
+                        </span>
+                </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-8">
+                    <label class="col-form-label">Attributes:</label>
+                    <div th:unless="${book.attributes == null}">
+                <span class="font-weight-bold" th:each="attribute : ${#strings.arraySplit(book.attributes, ',')}"
+                      th:with="attribute=${#strings.trim(attribute)}">
+                    <span class="text-nowrap">
+                    <th:block th:text="${attribute}"></th:block>
+                    <a th:href="@{/admin/book/{bookId}/attribute/delete/{attribute}(bookId=${book.id}, attribute=${attribute})}">
+                        <img th:src="@{/img/cross.png}">
+                    </a>
+                        </span>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+
+        <input type="submit" class="btn btn-success" th:if="${book.id == null}" value="Save book">
+        <input type="submit" class="btn btn-success" th:unless="${book.id == null}" value="Edit book">
+    </form>
+    <div th:unless="${book.id == null}">
+        <div class="row">
+            <div class="col-sm-4">
+                <button class="btn btn-info mt-3 mb-3" type="button" data-toggle="collapse" data-target="#author"
+                        aria-expanded="false" aria-controls="author">
+                    Add author
+                </button>
+                <div class="collapse" id="author">
+                    <form class="form-inline" th:action="@{/admin/book/{bookId}/author/save(bookId=${book.id})}"
+                          method="post">
+                        <div class="form-group">
+                            <input class="form-control mr-3" type="text" name="name" maxlength="255" required>
+                            <input type="submit" class="btn btn-primary" value="Save">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-info mt-3 mb-3" type="button" data-toggle="collapse" data-target="#attribute"
+                        aria-expanded="false" aria-controls="attribute">
+                    Add attribute
+                </button>
+                <div class="collapse" id="attribute">
+                    <form class="form-inline" th:action="@{/admin/book/{bookId}/attribute/save(bookId=${book.id})}"
+                          method="post">
+                        <div class="form-group">
+                            <input class="form-control mr-3" type="text" name="name" maxlength="255" required>
+                            <input type="submit" class="btn btn-primary" value="Save">
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
-<input type="submit" class="btn btn-success" th:if="${book.id == null}" value="Save book">
-<input type="submit" class="btn btn-success" th:unless="${book.id == null}" value="Edit book">
-</form>
+    </div>
 </div>
 </body>
 </html>

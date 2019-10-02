@@ -5,14 +5,12 @@ import com.zhitar.library.service.UserService;
 import com.zhitar.library.util.ValidationUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
 import javax.validation.Valid;
@@ -59,6 +57,7 @@ public class WelcomeController {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String duplicateEmail(DataIntegrityViolationException e, Model model) {
         String rootMsg = ValidationUtil.getRootCause(e).getMessage();
         if (rootMsg.contains("unique_user_email")) {
@@ -69,6 +68,4 @@ public class WelcomeController {
         }
         return null;
     }
-
-
 }

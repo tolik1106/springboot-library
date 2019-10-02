@@ -1,5 +1,7 @@
 package com.zhitar.library.controller;
 
+import com.zhitar.library.domain.Attribute;
+import com.zhitar.library.domain.Author;
 import com.zhitar.library.dto.BookDto;
 import com.zhitar.library.dto.UserDto;
 import com.zhitar.library.service.AdminService;
@@ -15,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminController {
 
+    private static final String REDIRECT_ADMIN_EDIT_ID = "redirect:/admin/edit?id=";
     private final AdminService adminService;
     @GetMapping("/delete")
     public String deleteBook(@RequestParam Integer id) {
@@ -43,8 +46,8 @@ public class AdminController {
 
     @PostMapping("/save")
     public String saveBook(BookDto bookDto) {
-        adminService.save(bookDto);
-        return "redirect:/books";
+        BookDto saved = adminService.save(bookDto);
+        return REDIRECT_ADMIN_EDIT_ID + saved.getId();
     }
 
     @GetMapping("/readers")
@@ -64,5 +67,29 @@ public class AdminController {
     public String returnBook(Integer userId, Integer bookId) {
         adminService.returnBook(bookId, userId);
         return "redirect:/admin/readers";
+    }
+
+    @GetMapping("/book/{bookId}/attribute/delete/{attribute}")
+    public String deleteAttribute(@PathVariable Integer bookId, @PathVariable String attribute) {
+        adminService.deleteAttribute(bookId, attribute);
+        return REDIRECT_ADMIN_EDIT_ID + bookId;
+    }
+
+    @GetMapping("/book/{bookId}/author/delete/{author}")
+    public String deleteAuthor(@PathVariable Integer bookId, @PathVariable String author) {
+        adminService.deleteAuthor(bookId, author);
+        return REDIRECT_ADMIN_EDIT_ID + bookId;
+    }
+
+    @PostMapping("/book/{bookId}/author/save")
+    public String addAuthor(@PathVariable Integer bookId, Author author) {
+        adminService.saveAuthor(bookId, author);
+        return REDIRECT_ADMIN_EDIT_ID + bookId;
+    }
+
+    @PostMapping("/book/{bookId}/attribute/save")
+    public String addAttribute(@PathVariable Integer bookId, Attribute attribute) {
+        adminService.saveAttribute(bookId, attribute);
+        return REDIRECT_ADMIN_EDIT_ID + bookId;
     }
 }

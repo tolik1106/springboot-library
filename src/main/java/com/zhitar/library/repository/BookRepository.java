@@ -14,13 +14,13 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     List<Book> findByOwnerId(Integer userId);
 
-    @Query("SELECT b FROM Book b JOIN FETCH b.authors JOIN FETCH b.attributes WHERE b.id=?1")
+    @Query("SELECT b FROM Book b LEFT JOIN FETCH b.authors LEFT JOIN FETCH b.attributes WHERE b.id=?1")
     Book findByIdWithAuthorsAndAttributes(Integer id);
 
     @Query("SELECT b FROM Book b")
     Page<Book> findAll(Pageable pageable);
 
-    @Query("SELECT DISTINCT b FROM Book b JOIN FETCH b.authors WHERE b.id IN (:bookIds) ORDER BY b.name")
+    @Query("SELECT DISTINCT b FROM Book b LEFT JOIN FETCH b.authors WHERE b.id IN (:bookIds) ORDER BY b.name")
     List<Book> findByIdsWithAuthor(@Param("bookIds") List<Integer> bookIds, Sort sort);
 
     @Query(value = "SELECT b FROM Book b WHERE b.name LIKE %:name%",
