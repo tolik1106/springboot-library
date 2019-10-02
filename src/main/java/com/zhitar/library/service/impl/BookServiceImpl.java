@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +19,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.zhitar.library.controller.BookController.DEFAULT_SORT;
 
 @Service
 @AllArgsConstructor
@@ -114,7 +115,7 @@ public class BookServiceImpl implements BookService {
     private Page<Book> getBooksPage(Page<Book> books) {
         List<Book> bookList = bookRepository.findByIdsWithAuthor(
                 books.getContent().stream().map(Book::getId).collect(Collectors.toList()),
-                new Sort(Sort.Direction.ASC, "name")
+                DEFAULT_SORT
         );
         books = new PageImpl<>(bookList, books.getPageable(), books.getTotalElements());
         return books;

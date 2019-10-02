@@ -28,7 +28,7 @@ public class BookController {
     private static final String NAME = "name";
     private static final String AUTHOR = "author";
     private static final String ATTRIBUTE = "attribute";
-    private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, NAME);
+    public static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, NAME);
 
     private final BookService bookService;
 
@@ -40,10 +40,21 @@ public class BookController {
             @RequestParam(name = NAME, required = false) String name,
             @RequestParam(name = AUTHOR, required = false) String author,
             @RequestParam(name = ATTRIBUTE, required = false) String attribute,
-            HttpSession session
+            HttpSession session,
+            @RequestParam(name = "filter", required = false) String filter
     ) {
         pageable = PageRequest.of(pageable.getPageNumber(), DEFAULT_PAGE_SIZE, DEFAULT_SORT);
         Page<BookDto> page = null;
+        if ("clear".equalsIgnoreCase(filter)) {
+            session.removeAttribute(NAME);
+            session.removeAttribute(AUTHOR);
+            session.removeAttribute(ATTRIBUTE);
+        } else if (name == null && author == null && attribute == null) {
+            name = (String) session.getAttribute(NAME);
+            author = (String) session.getAttribute(AUTHOR);
+            attribute = (String) session.getAttribute(ATTRIBUTE);
+        }
+
         if (name != null) {
             removeAttributes(session, AUTHOR, ATTRIBUTE);
             session.setAttribute(NAME, name);

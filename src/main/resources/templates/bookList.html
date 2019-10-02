@@ -7,7 +7,6 @@
 
 <div class="container">
     <h2 class="text-center">Book List</h2>
-    <div>
         <form action="/books" method="get">
             <div class="form-group row">
                 <div class="col-sm-3"></div>
@@ -16,21 +15,22 @@
                 </div>
                 <div class="col-auto">
                     <select class="form-control" id="select" onchange="changeSearchName(this)">
-                        <option name="name">name</option>
-                        <option name="author">author</option>
-                        <option name="attribute">attribute</option>
+                        <option name="name" th:selected="${session.name != null}">name</option>
+                        <option name="author" th:selected="${session.author != null}">author</option>
+                        <option name="attribute" th:selected="${session.attribute != null}">attribute</option>
                     </select>
                 </div>
                 <div class="col-sm-3">
-                    <input id="search" class="form-control" name="name" type="text" required>
+                    <input id="search" class="form-control" name="name" type="text" th:value="${session.name != null} ? ${session.name} : (${session.author != null} ? ${session.author} : (${session.attribute != null} ? ${session.attribute} : ''))" required>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-1">
                     <input type="submit" class="btn btn-info" value="Search">
                 </div>
-                <div class="col-sm-2"></div>
+                <div class="col-sm-2">
+                    <a th:href="@{/books?filter=clear}" class="btn btn-secondary">Clear filter</a>
+                </div>
             </div>
         </form>
-    </div>
 
     <div sec:authorize="hasAuthority('ADMIN')">
         <a class="btn btn-primary mb-3" th:href="@{/admin/save}">Add new book</a>
