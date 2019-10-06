@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AbstractEntity<PK extends Serializable> implements Serializable {
+public abstract class AbstractEntity<PK extends Serializable> implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id

@@ -80,7 +80,7 @@ public class BookController {
     }
 
     @GetMapping("take/{id}")
-    public String takeBook(@PathVariable Integer id, @AuthenticationPrincipal User user, Model model) {
+    public String takeBook(@PathVariable Integer id, @AuthenticationPrincipal User user) {
         bookService.takeBook(id, user.getId());
         return "redirect:/books";
     }

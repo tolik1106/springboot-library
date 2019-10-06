@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="fragments/headFragment :: head">
 </head>
 <body>
@@ -7,8 +7,8 @@
 
 <div class="container">
     <h2 class="text-center">
-        <th:block th:if="${book.id == null}">Save book</th:block>
-        <th:block th:unless="${book.id == null}">Edit book</th:block>
+        <th:block th:if="${book.id == null}" th:text="#{message.book.save}"></th:block>
+        <th:block th:unless="${book.id == null}" th:text="#{message.book.edit}"></th:block>
     </h2>
 
 
@@ -18,31 +18,35 @@
         </th:block>
 
         <div class="form-group row">
-            <label for="name" class="col-sm-2 col-form-label">Name</label>
+            <label for="name" class="col-sm-2 col-form-label" th:text="#{message.name}"></label>
             <div class="col-sm-6">
                 <input id="name" name="name" type="text" class="form-control" th:value="${book.name}" size="50"
                        maxlength="100" required>
-                <!--<small class="form-text text-danger collapse" th:classappend="${BooknameError != null} ? 'show' : ''" th:text="${BooknameError}"></small>-->
+                <small class="form-text text-danger collapse" th:classappend="${BookDtonameError != null} ? 'show' : ''" th:text="${BookDtonameError}"></small>
             </div>
         </div>
 
         <div class="form-group row">
-            <label for="bookcase" class="col-sm-2 col-form-label">Bookcase</label>
+            <label for="bookcase" class="col-sm-2 col-form-label" th:text="#{message.book.bookcase}"></label>
             <div class="col-sm-2">
                 <input id="bookcase" name="bookcase" class="form-control" type="number" th:value="${book.bookcase}"
                        required>
+                <small class="form-text text-danger collapse" th:classappend="${BookDtobookcaseError != null} ? 'show' : ''" th:text="${BookDtobookcaseError}"></small>
             </div>
-            <label for="bookshelf" class="col-sm-2 col-form-label">Shelf</label>
+            <label for="bookshelf" class="col-sm-2 col-form-label" th:text="#{message.book.shelf}"></label>
             <div class="col-sm-2">
                 <input id="bookshelf" name="bookshelf" class="form-control" type="number" th:value="${book.bookshelf}"
                        required>
+                <small class="form-text text-danger collapse" th:classappend="${BookDtobookshelfError != null} ? 'show' : ''" th:text="${BookDtobookshelfError}"></small>
             </div>
+            <input type="hidden" name="authors" th:value="${book.authors}">
+            <input type="hidden" name="attributes" th:value="${book.attributes}">
         </div>
 
         <th:block th:if="${book.id != null}">
             <div class="form-group row">
                 <div class="col-sm-8">
-                    <label class="col-form-label">Authors:</label>
+                    <label class="col-form-label" th:text="#{message.book.authors}"></label>
                     <div th:unless="${book.authors == null}">
                 <span class="font-weight-bold" th:each="author : ${#strings.arraySplit(book.authors, ',')}"
                       th:with="author=${#strings.trim(author)}">
@@ -58,7 +62,7 @@
             </div>
             <div class="form-group row">
                 <div class="col-sm-8">
-                    <label class="col-form-label">Attributes:</label>
+                    <label class="col-form-label" th:text="#{message.book.attributes}"></label>
                     <div th:unless="${book.attributes == null}">
                 <span class="font-weight-bold" th:each="attribute : ${#strings.arraySplit(book.attributes, ',')}"
                       th:with="attribute=${#strings.trim(attribute)}">
@@ -74,38 +78,40 @@
             </div>
         </th:block>
 
-        <input type="submit" class="btn btn-success" th:if="${book.id == null}" value="Save book">
-        <input type="submit" class="btn btn-success" th:unless="${book.id == null}" value="Edit book">
+        <input type="submit" class="btn btn-success" th:if="${book.id == null}" th:value="#{message.book.save}">
+        <input type="submit" class="btn btn-success" th:unless="${book.id == null}" th:value="#{message.book.edit}">
     </form>
     <div th:unless="${book.id == null}">
         <div class="row">
             <div class="col-sm-4">
                 <button class="btn btn-info mt-3 mb-3" type="button" data-toggle="collapse" data-target="#author"
-                        aria-expanded="false" aria-controls="author">
-                    Add author
+                        th:attr="aria-expanded=${AuthornameError == null} ? 'false' : 'true'" aria-controls="author"
+                        th:text="#{message.book.author.add}">
                 </button>
-                <div class="collapse" id="author">
+                <div class="collapse" th:classappend="${AuthornameError != null} ? 'show' : ''" id="author">
                     <form class="form-inline" th:action="@{/admin/book/{bookId}/author/save(bookId=${book.id})}"
                           method="post">
                         <div class="form-group">
                             <input class="form-control mr-3" type="text" name="name" maxlength="255" required>
-                            <input type="submit" class="btn btn-primary" value="Save">
+                            <input type="submit" class="btn btn-primary" th:value="#{message.book.save}">
                         </div>
+                        <small class="form-text text-danger collapse" th:classappend="${AuthornameError != null} ? 'show' : ''" th:text="${AuthornameError}"></small>
                     </form>
                 </div>
             </div>
             <div class="col-sm-4">
                 <button class="btn btn-info mt-3 mb-3" type="button" data-toggle="collapse" data-target="#attribute"
-                        aria-expanded="false" aria-controls="attribute">
-                    Add attribute
+                        th:attr="aria-expanded=${AttributenameError == null} ? 'false' : 'true'" aria-controls="attribute"
+                        th:text="#{message.book.attribute.add}">
                 </button>
-                <div class="collapse" id="attribute">
+                <div class="collapse" th:classappend="${AttributenameError != null} ? 'show' : ''" id="attribute">
                     <form class="form-inline" th:action="@{/admin/book/{bookId}/attribute/save(bookId=${book.id})}"
                           method="post">
                         <div class="form-group">
                             <input class="form-control mr-3" type="text" name="name" maxlength="255" required>
-                            <input type="submit" class="btn btn-primary" value="Save">
+                            <input type="submit" class="btn btn-primary" th:value="#{message.book.save}">
                         </div>
+                        <small class="form-text text-danger collapse" th:classappend="${AttributenameError != null} ? 'show' : ''" th:text="${AttributenameError}"></small>
                     </form>
                 </div>
             </div>

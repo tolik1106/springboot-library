@@ -6,36 +6,47 @@
      style="background-color: #e1eaed;">
 
     <span class="navbar-brand">
-        <img th:src="@{/img/library.png}" class="d-inline-block align-top" alt="">
-                Library
+        <img th:src="@{/img/library.png}" class="d-inline-block align-top" alt="" th:text="#{message.title}">
     </span>
 
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link text-secondary" th:href="@{/}">Home</a>
+                <a class="nav-link text-secondary" th:href="@{/}" th:text="#{message.home}"></a>
             </li>
             <li sec:authorize="isAuthenticated()">
-                <a th:href="@{/books?page=0}" class="nav-link">Book list</a>
+                <a th:href="@{/books?page=0}" class="nav-link" th:text="#{message.book.list}"></a>
             </li>
             <li sec:authorize="hasAuthority('ADMIN')">
-                <a th:href="@{/admin/readers}" class="nav-link">Readers</a>
+                <a th:href="@{/admin/readers}" class="nav-link" th:text="#{message.readers}"></a>
             </li>
         </ul>
     </div>
 
     <span class="form-inline">
-        <span class="navbar-brand mb-0 h1" sec:authorize="isAuthenticated()"><span sec:authentication="principal.name"></span></span> </span>
+        <span class="navbar-brand mb-0 h1" sec:authorize="isAuthenticated()">
+            <span sec:authentication="principal.name"></span>
+        </span>
+    </span>
         <span class="nav-item mb-0 mr-4" sec:authorize="isAuthenticated()">
-            <a href="/logout">Logout</a>
+            <a href="/logout" th:text="#{message.logout}"></a>
         </span>
 
         <span class="nav-item mb-0 mr-4" sec:authorize="isAnonymous()">
-            <a href="/login">Login</a>
+            <a href="/login" th:text="#{message.login}"></a>
         </span>
 
         <span class="nav-item mb-0" sec:authorize="isAnonymous()">
-            <a href="/register">Register</a></span>
+            <a href="/register" th:text="#{message.register}"></a></span>
+    </span>
+
+    <span class="form-inline dropdown">
+        <span class="dropdown-toggle nav-link my-1 ml-2" data-toggle="dropdown" th:text="${#response.locale.language}"></span>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" th:href="@{''(lang=en)}" th:text="English"></a>
+            <a class="dropdown-item" th:href="@{''(lang=ru)}" th:text="Русский"></a>
+            <a class="dropdown-item" th:href="@{''(lang=uk)}" th:text="Українська"></a>
+        </div>
     </span>
 </nav>
 <div>

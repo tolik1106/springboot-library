@@ -6,50 +6,50 @@
 <div th:insert="fragments/header :: header"></div>
 
 <div class="container">
-    <h2 class="text-center">Book List</h2>
+    <h2 class="text-center" th:text="#{message.book.list}"></h2>
         <form action="/books" method="get">
             <div class="form-group row">
                 <div class="col-sm-3"></div>
                 <div class="col-auto">
-                    <label for="select" class="col-form-label">Find by</label>
+                    <label for="select" class="col-form-label" th:text="#{message.find}"></label>
                 </div>
                 <div class="col-auto">
                     <select class="form-control" id="select" onchange="changeSearchName(this)">
-                        <option name="name" th:selected="${session.name != null}">name</option>
-                        <option name="author" th:selected="${session.author != null}">author</option>
-                        <option name="attribute" th:selected="${session.attribute != null}">attribute</option>
+                        <option name="name" th:selected="${session.name != null}" th:text="#{message.select.name}"></option>
+                        <option name="author" th:selected="${session.author != null}" th:text="#{message.select.author}"></option>
+                        <option name="attribute" th:selected="${session.attribute != null}" th:text="#{message.select.attribute}"></option>
                     </select>
                 </div>
                 <div class="col-sm-3">
                     <input id="search" class="form-control" name="name" type="text" th:value="${session.name != null} ? ${session.name} : (${session.author != null} ? ${session.author} : (${session.attribute != null} ? ${session.attribute} : ''))" required>
                 </div>
                 <div class="col-sm-1">
-                    <input type="submit" class="btn btn-info" value="Search">
+                    <input type="submit" class="btn btn-info" th:value="#{message.search}">
                 </div>
                 <div class="col-sm-2">
-                    <a th:href="@{/books?filter=clear}" class="btn btn-secondary">Clear filter</a>
+                    <a th:href="@{/books?filter=clear}" class="btn btn-secondary" th:text="#{message.clear.filter}"></a>
                 </div>
             </div>
         </form>
 
     <div sec:authorize="hasAuthority('ADMIN')">
-        <a class="btn btn-primary mb-3" th:href="@{/admin/save}">Add new book</a>
+        <a class="btn btn-primary mb-3" th:href="@{/admin/save}" th:text="#{message.book.new}"></a>
     </div>
 
     <h2 th:if="${error != null}">Not found</h2>
-    <h2 th:if="${error == null and page.getContent().isEmpty()}">There are no books in the library</h2>
+    <h2 th:if="${error == null and page.getContent().isEmpty()}" th:text="#{message.empty.library}"></h2>
 
     <div th:if="${(error == null) and (!page.getContent().isEmpty())}" class="table-responsive-sm">
         <table class="table">
             <thead>
             <tr>
-                <th>Title</th>
-                <th>Authors</th>
+                <th th:text="#{message.book.name}"></th>
+                <th th:text="#{message.book.authors}"></th>
                 <th:block sec:authorize="hasAuthority('ADMIN')">
-                    <th>Bookcase</th>
-                    <th>Shelf</th>
+                    <th th:text="#{message.book.bookcase}"></th>
+                    <th th:text="#{message.book.shelf}"></th>
                 </th:block>
-                <th>Action</th>
+                <th th:text="#{message.action}"></th>
                 <th:block sec:authorize="hasAuthority('ADMIN')">
                     <th colspan="2"></th>
                 </th:block>
@@ -67,21 +67,21 @@
                     </th:block>
                     <!--Check is debtor-->
                     <th:block th:if="${book.expiredDays == null && !debtor}">
-                        <td><a th:href="@{/books/take/{id}(id=${book.id})}">Take book</a> </td>
+                        <td><a th:href="@{/books/take/{id}(id=${book.id})}" th:text="#{message.book.take}"></a></td>
                     </th:block>
                     <th:block th:if="${book.expiredDays == null && debtor}">
-                        <td>You can't take any book</td>
+                        <td th:text="#{message.book.debtor}"></td>
                     </th:block>
 
                     <th:block th:unless="${book.expiredDays == null}">
                         <th:block th:with="isCurrentUserBook=${book.ownerId == userId}">
 
                             <th:block th:if="${isCurrentUserBook}">
-                                <td th:if="${!book.ordered}" th:text="${30 - book.expiredDays} + ' day(s) to return'"></td>
-                                <td th:if="${book.ordered}"><a th:href="@{/books/cancel/{id}(id=${book.id})}">Cancel</a></td>
+                                <td th:if="${!book.ordered}" th:text="#{message.book.toreturn(${30 - book.expiredDays})}"></td>
+                                <td th:if="${book.ordered}"><a th:href="@{/books/cancel/{id}(id=${book.id})}" th:text="#{message.book.cancel}"></a></td>
                             </th:block>
                             <th:block th:if="${!isCurrentUserBook}">
-                                <td>This book is unavailable</td>
+                                <td th:text="#{message.book.unavailable}"></td>
                             </th:block>
                         </th:block>
                     </th:block>
@@ -107,7 +107,7 @@
         <nav>
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${page.isFirst()} ? 'disabled' : ''">
-                    <a class="page-link" th:href="@{/books?page={previous}(previous=${page.getNumber() - 1})}" tabindex="-1">Previous</a>
+                    <a class="page-link" th:href="@{/books?page={previous}(previous=${page.getNumber() - 1})}" tabindex="-1" th:text="#{message.page.previous}"></a>
                 </li>
                 <th:block th:each="pag: ${#numbers.sequence(1, page.getTotalPages())}">
                     <li class="page-item" th:classappend="${pag == page.getNumber() + 1} ? 'active' : ''">
@@ -115,7 +115,7 @@
                     </li>
                 </th:block>
                 <li class="page-item" th:classappend="${page.isLast()} ? 'disabled' : ''">
-                    <a class="page-link" th:href="@{/books?page={next}(next=${page.getNumber() + 1})}" tabindex="-1">Next</a>
+                    <a class="page-link" th:href="@{/books?page={next}(next=${page.getNumber() + 1})}" tabindex="-1" th:text="#{message.page.next}"></a>
                 </li>
             </ul>
         </nav>

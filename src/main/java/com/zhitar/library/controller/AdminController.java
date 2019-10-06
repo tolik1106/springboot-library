@@ -8,9 +8,15 @@ import com.zhitar.library.service.AdminService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+
+import static com.zhitar.library.util.ControllerUtil.getErrorsMap;
 
 @Controller
 @RequestMapping("/admin")
@@ -33,7 +39,13 @@ public class AdminController {
     }
 
     @PostMapping("/edit")
-    public String editBook(BookDto bookDto) {
+    public String editBook(@Valid BookDto bookDto, BindingResult result, ModelMap modelMap) {
+        if (result.hasErrors()) {
+            Map<String, String> errorsMap = getErrorsMap(BookDto.class, result);
+            modelMap.mergeAttributes(errorsMap);
+            modelMap.addAttribute("book", bookDto);
+            return "book";
+        }
         adminService.update(bookDto);
         return "redirect:/books";
     }
@@ -82,13 +94,27 @@ public class AdminController {
     }
 
     @PostMapping("/book/{bookId}/author/save")
-    public String addAuthor(@PathVariable Integer bookId, Author author) {
+    public String addAuthor(@PathVariable Integer bookId, @Valid Author author, BindingResult result, ModelMap modelMap) {
+        if (result.hasErrors()) {
+            Map<String, String> errorsMap = getErrorsMap(Author.class, result);
+            modelMap.mergeAttributes(errorsMap);
+            BookDto book = adminService.findBook(bookId);
+            modelMap.addAttribute("book", book);
+            return "book";
+        }
         adminService.saveAuthor(bookId, author);
         return REDIRECT_ADMIN_EDIT_ID + bookId;
     }
 
     @PostMapping("/book/{bookId}/attribute/save")
-    public String addAttribute(@PathVariable Integer bookId, Attribute attribute) {
+    public String addAttribute(@PathVariable Integer bookId, @Valid Attribute attribute, BindingResult result, ModelMap modelMap) {
+        if (result.hasErrors()) {
+            Map<String, String> errorsMap = getErrorsMap(Attribute.class, result);
+            modelMap.mergeAttributes(errorsMap);
+            BookDto book = adminService.findBook(bookId);
+            modelMap.addAttribute("book", book);
+            return "book";
+        }
         adminService.saveAttribute(bookId, attribute);
         return REDIRECT_ADMIN_EDIT_ID + bookId;
     }

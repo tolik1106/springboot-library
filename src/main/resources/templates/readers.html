@@ -6,10 +6,10 @@
 <div th:insert="fragments/header :: header"></div>
 
 <div class="container">
-    <div class="text-center h2">Readers</div>
+    <div class="text-center h2" th:text="#{message.readers}"></div>
 
     <th:block th:if="${users == null or users.isEmpty()}">
-        <h2>There are no readers</h2>
+        <h2 th:text="#{message.readers.empty}">There are no readers</h2>
     </th:block>
     <th:block th:unless="${users == null or users.isEmpty()}">
         <ul>
@@ -23,7 +23,7 @@
                             <form style="display: inline-block" method="post" th:action="${action}">
                                 <input type="hidden" name="bookId" th:value="${book.id}">
                                 <input type="hidden" name="userId" th:value="${user.id}">
-                                <input type="submit" class="btn btn-sm" th:classappend="${book.ordered} ? 'btn-primary' : 'btn-outline-success'" th:value="${book.ordered} ? 'Give' : 'Return'">
+                                <input type="submit" class="btn btn-sm" th:classappend="${book.ordered} ? 'btn-primary' : 'btn-outline-success'" th:value="${book.ordered} ? #{message.book.give} : #{message.book.return}">
                             </form>
                             </th:block>
                         </li>
