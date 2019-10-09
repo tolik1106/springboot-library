@@ -65,7 +65,10 @@ public class AdminServiceImpl implements AdminService {
     public BookDto update(BookDto bookDto) {
         Book bookFromDb = bookRepository.findById(bookDto.getId()).orElseThrow(() -> new NotFoundException("Book with id " + bookDto.getId() + " not found"));
         Book bookToUpdate = bookMapper.toEntity(bookDto);
-        return bookMapper.toDto(bookRepository.save(bookToUpdate));
+        bookFromDb.setName(bookToUpdate.getName());
+        bookFromDb.setBookcase(bookToUpdate.getBookcase());
+        bookFromDb.setBookshelf(bookToUpdate.getBookshelf());
+        return bookMapper.toDto(bookRepository.save(bookFromDb));
     }
 
     @Override

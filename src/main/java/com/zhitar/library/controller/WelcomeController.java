@@ -61,7 +61,9 @@ public class WelcomeController {
     public String duplicateEmail(DataIntegrityViolationException e, Model model) {
         String rootMsg = ValidationUtil.getRootCause(e).getMessage();
         if (rootMsg.contains("unique_user_email")) {
-            model.addAttribute("duplicateemailError", "User with this email already exist");
+            int beginIndex = rootMsg.indexOf('\'');
+            String duplicateEmail = rootMsg.substring(beginIndex, rootMsg.indexOf('\'', beginIndex + 1) + 1);
+            model.addAttribute("duplicateemailError", duplicateEmail);
             model.addAttribute("register", true);
             model.addAttribute("userDto", new UserDto());
             return "login";

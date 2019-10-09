@@ -28,9 +28,7 @@ public class BookDto {
     @Range(min = 1L, max = 10L)
     private Integer bookshelf;
     private Boolean ordered = false;
-    @Size(min = 2)
     private String authors;
-    @Size(min = 2)
     private String attributes;
 
     public BookDto(Integer id, Integer ownerId, String name, Integer expiredDays, Integer bookcase, Integer bookshelf, Boolean ordered) {

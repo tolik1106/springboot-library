@@ -69,9 +69,12 @@ public class BookController {
             page = bookService.findByAttribute(attribute, pageable);
         } else {
             page = bookService.findAll(pageable);
+            if (page.getContent().isEmpty()) {
+                model.addAttribute("empty", true);
+            }
         }
         if (page.getContent().isEmpty()) {
-            model.addAttribute("error", "");
+            model.addAttribute("error", true);
         }
         model.addAttribute("page", page);
         model.addAttribute("userId", user.getId());

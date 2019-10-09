@@ -22,7 +22,7 @@
             <div class="col-sm-6">
                 <input id="name" name="name" type="text" class="form-control" th:value="${book.name}" size="50"
                        maxlength="100" required>
-                <small class="form-text text-danger collapse" th:classappend="${BookDtonameError != null} ? 'show' : ''" th:text="${BookDtonameError}"></small>
+                <small class="form-text text-danger collapse" th:classappend="${BookDtonameError != null} ? 'show' : ''" th:text="#{message.booknamelength.error}"></small>
             </div>
         </div>
 
@@ -31,13 +31,13 @@
             <div class="col-sm-2">
                 <input id="bookcase" name="bookcase" class="form-control" type="number" th:value="${book.bookcase}"
                        required>
-                <small class="form-text text-danger collapse" th:classappend="${BookDtobookcaseError != null} ? 'show' : ''" th:text="${BookDtobookcaseError}"></small>
+                <small class="form-text text-danger collapse" th:classappend="${BookDtobookcaseError != null} ? 'show' : ''" th:text="#{message.bookcase.error}"></small>
             </div>
             <label for="bookshelf" class="col-sm-2 col-form-label" th:text="#{message.book.shelf}"></label>
             <div class="col-sm-2">
                 <input id="bookshelf" name="bookshelf" class="form-control" type="number" th:value="${book.bookshelf}"
                        required>
-                <small class="form-text text-danger collapse" th:classappend="${BookDtobookshelfError != null} ? 'show' : ''" th:text="${BookDtobookshelfError}"></small>
+                <small class="form-text text-danger collapse" th:classappend="${BookDtobookshelfError != null} ? 'show' : ''" th:text="#{message.bookshelf.error}"></small>
             </div>
             <input type="hidden" name="authors" th:value="${book.authors}">
             <input type="hidden" name="attributes" th:value="${book.attributes}">
@@ -95,7 +95,7 @@
                             <input class="form-control mr-3" type="text" name="name" maxlength="255" required>
                             <input type="submit" class="btn btn-primary" th:value="#{message.book.save}">
                         </div>
-                        <small class="form-text text-danger collapse" th:classappend="${AuthornameError != null} ? 'show' : ''" th:text="${AuthornameError}"></small>
+                        <small class="form-text text-danger collapse" th:classappend="${AuthornameError != null} ? 'show' : ''" th:text="#{message.authorname.error}"></small>
                     </form>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                             <input class="form-control mr-3" type="text" name="name" maxlength="255" required>
                             <input type="submit" class="btn btn-primary" th:value="#{message.book.save}">
                         </div>
-                        <small class="form-text text-danger collapse" th:classappend="${AttributenameError != null} ? 'show' : ''" th:text="${AttributenameError}"></small>
+                        <small class="form-text text-danger collapse" th:classappend="${AttributenameError != null} ? 'show' : ''" th:text="#{message.attributename.error}"></small>
                     </form>
                 </div>
             </div>

@@ -23,7 +23,7 @@ import static com.zhitar.library.util.ControllerUtil.getErrorsMap;
 @AllArgsConstructor
 public class AdminController {
 
-    private static final String REDIRECT_ADMIN_EDIT_ID = "redirect:/admin/edit?id=";
+    private static final String REDIRECT_ADMIN_EDIT_ID = "redirect:/admin/edit/";
     private final AdminService adminService;
     @GetMapping("/delete")
     public String deleteBook(@RequestParam Integer id) {
@@ -31,8 +31,8 @@ public class AdminController {
         return "redirect:/books";
     }
 
-    @GetMapping("/edit")
-    public String editBook(@RequestParam Integer id, Model model) {
+    @GetMapping("/edit/{id}")
+    public String editBook(@PathVariable Integer id, Model model) {
         BookDto book = adminService.findBook(id);
         model.addAttribute("book", book);
         return "book";
@@ -40,12 +40,7 @@ public class AdminController {
 
     @PostMapping("/edit")
     public String editBook(@Valid BookDto bookDto, BindingResult result, ModelMap modelMap) {
-        if (result.hasErrors()) {
-            Map<String, String> errorsMap = getErrorsMap(BookDto.class, result);
-            modelMap.mergeAttributes(errorsMap);
-            modelMap.addAttribute("book", bookDto);
-            return "book";
-        }
+        if (isErrors(bookDto, result, modelMap)) return "book";
         adminService.update(bookDto);
         return "redirect:/books";
     }
@@ -57,7 +52,8 @@ public class AdminController {
     }
 
     @PostMapping("/save")
-    public String saveBook(BookDto bookDto) {
+    public String saveBook(@Valid BookDto bookDto, BindingResult result, ModelMap modelMap) {
+        if (isErrors(bookDto, result, modelMap)) return "book";
         BookDto saved = adminService.save(bookDto);
         return REDIRECT_ADMIN_EDIT_ID + saved.getId();
     }
@@ -117,5 +113,15 @@ public class AdminController {
         }
         adminService.saveAttribute(bookId, attribute);
         return REDIRECT_ADMIN_EDIT_ID + bookId;
+    }
+
+    private boolean isErrors(BookDto bookDto, BindingResult result, ModelMap modelMap) {
+        if (result.hasErrors()) {
+            Map<String, String> errorsMap = getErrorsMap(BookDto.class, result);
+            modelMap.mergeAttributes(errorsMap);
+            modelMap.addAttribute("book", bookDto);
+            return true;
+        }
+        return false;
     }
 }

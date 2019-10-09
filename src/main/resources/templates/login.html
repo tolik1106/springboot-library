@@ -18,23 +18,23 @@
                     <div th:if="${register}" class="form-group">
                         <label for="name" th:text="#{message.name}"></label>
                         <input id="name" class="form-control" name="name" type="text" th:value="${userDto.name}" required>
-                        <small class="form-text text-danger collapse" th:classappend="${UserDtonameError != null } ? 'show' : ''" th:text="${UserDtonameError}"></small>
+                        <small class="form-text text-danger collapse" th:classappend="${UserDtonameError != null } ? 'show' : ''" th:text="#{message.username.error}"></small>
                     </div>
                     <div class="form-group">
                         <label for="email" th:text="#{message.email}"></label>
                         <input id="email" name="email" class="form-control" type="email" th:value="${userDto == null ? '' : userDto.email}" required>
-                        <small class="form-text text-danger collapse" th:classappend="${UserDtoemailError != null} ? 'show' : ''" th:text="${UserDtoemailError}"></small>
-                        <small class="form-text text-danger collapse" th:classappend="${duplicateemailError != null} ? 'show' : ''" th:text="${duplicateemailError}"></small>
+                        <small class="form-text text-danger collapse" th:classappend="${UserDtoemailError != null} ? 'show' : ''" th:text="#{message.useremail.error}"></small>
+                        <small class="form-text text-danger collapse" th:classappend="${duplicateemailError != null} ? 'show' : ''" th:text="#{message.duplicateemail.error(${duplicateemailError})}"></small>
                     </div>
                     <div class="form-group">
                         <label for="password" th:text="#{message.password}"></label>
                         <input id="password" name="password" class="form-control" type="password" required>
-                        <small class="form-text text-danger collapse" th:classappend="${UserDtopasswordError != null} ? 'show' : ''" th:text="${UserDtopasswordError}"></small>
+                        <small class="form-text text-danger collapse" th:classappend="${UserDtopasswordError != null} ? 'show' : ''" th:text="#{message.userpassword.error}"></small>
                     </div>
                     <div th:if="${register}" class="form-group">
                         <label for="phone" th:text="#{message.phone}"></label>
                         <input id="phone" name="phone" class="form-control" type="number" th:value="${userDto.phone}" required>
-                        <small class="form-text text-danger collapse" th:classappend="${UserDtophoneError != null} ? 'show' : ''" th:text="${UserDtophoneError}"></small>
+                        <small class="form-text text-danger collapse" th:classappend="${UserDtophoneError != null} ? 'show' : ''" th:text="#{message.userphone.error}"></small>
                     </div>
                     <input type="submit" class="btn btn-primary" th:value="${register} ? #{message.register} : #{message.login}">
                 </form>

@@ -36,8 +36,8 @@
         <a class="btn btn-primary mb-3" th:href="@{/admin/save}" th:text="#{message.book.new}"></a>
     </div>
 
-    <h2 th:if="${error != null}">Not found</h2>
-    <h2 th:if="${error == null and page.getContent().isEmpty()}" th:text="#{message.empty.library}"></h2>
+    <h2 class="text-center" th:if="${empty}" th:text="#{message.empty.library}"></h2>
+    <h2 class="text-center" th:if="${empty == null and error != null}" th:text="#{message.notfound.error}"></h2>
 
     <div th:if="${(error == null) and (!page.getContent().isEmpty())}" class="table-responsive-sm">
         <table class="table">
@@ -88,7 +88,7 @@
 
                     <th:block sec:authorize="hasAuthority('ADMIN')">
                         <td>
-                            <a th:if="${book.expiredDays == null}" th:href="@{/admin/edit?id={id}(id=${book.id})}">
+                            <a th:if="${book.expiredDays == null}" th:href="@{/admin/edit/{id}(id=${book.id})}">
                                 <img src="/img/edit.png" th:src="@{img/edit.png}"/>
                             </a>
                         </td>
